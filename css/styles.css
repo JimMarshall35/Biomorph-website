@@ -10,12 +10,19 @@
 	
 	margin-right: 10px;
 }
-.submitbutton{
-	width: 100%;
-	align-items: center;
-	justify-content: center;
-}
 
+.heading{
+	font-family: "Courier New", Courier, monospace;
+font-size: 32px;
+letter-spacing: 2px;
+word-spacing: 2px;
+color: #000000;
+font-weight: 700;
+text-decoration: none;
+font-style: normal;
+font-variant: normal;
+text-transform: none;
+}
 
 html {}
 body {

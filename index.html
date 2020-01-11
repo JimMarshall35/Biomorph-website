@@ -6,42 +6,50 @@
   <link rel="stylesheet" type="text/css" href="css/styles.css">
 </head>
 
-<body>
-  <div id="nametitle">
-    This Biomorph Is Unnamed
+<body onresize="resizeHandler()">
+  <div id="nametitle" style="height: 10%;" align="center">
+
   </div>
-  <canvas id="c"></canvas>
 
+  <div style="height: 70%;">
+    <canvas id="c"></canvas>
+  </div>
+  
+
+  <div style="height: 20%;">
+     <form id="form">
+      <section class="genesflexbox">
+        gene 1: <input class="geneinput" type="number" id="gene1" max="9" min="-9"  autocomplete=off><br>
+
+        gene 2: <input class="geneinput" type="number" id="gene2" max="9" min="-9"  autocomplete=off><br>
+
+        gene 3: <input class="geneinput" type="number" id="gene3" max="9" min="-9"  autocomplete=off><br>
+
+        gene 4: <input class="geneinput" type="number" id="gene4" max="9" min="-9"  autocomplete=off><br>
+
+        gene 5: <input class="geneinput" type="number" id="gene5" max="9" min="-9"  autocomplete=off><br>
+
+        gene 6: <input class="geneinput" type="number" id="gene6" max="9" min="-9"  autocomplete=off><br>
+
+        gene 7: <input class="geneinput" type="number" id="gene7" max="9" min="-9"  autocomplete=off><br>
+      </section>
+      <input class="submitbutton" type="submit" value="Submit">
+    </form>
+    <button type="button" id="RandomB">Random</button>
+    <form id="nameform">
+      <section class="genesflexbox">
+        Name:<input type="text" id="name"><br>
+        User:<input type="text" id="user"><br>
+        <button type="button" id="entername">Enter</button>
+      </section>
+    </form>
+
+  </div>
    
-  <form id="form">
-    <section class="genesflexbox">
-      gene 1: <input class="geneinput" type="number" id="gene1" max="9" min="-9"  autocomplete=off><br>
-
-      gene 2: <input class="geneinput" type="number" id="gene2" max="9" min="-9"  autocomplete=off><br>
-
-      gene 3: <input class="geneinput" type="number" id="gene3" max="9" min="-9"  autocomplete=off><br>
-
-      gene 4: <input class="geneinput" type="number" id="gene4" max="9" min="-9"  autocomplete=off><br>
-
-      gene 5: <input class="geneinput" type="number" id="gene5" max="9" min="-9"  autocomplete=off><br>
-
-      gene 6: <input class="geneinput" type="number" id="gene6" max="9" min="-9"  autocomplete=off><br>
-
-      gene 7: <input class="geneinput" type="number" id="gene7" max="9" min="-9"  autocomplete=off><br>
-    </section>
-    
-
-    <input class="submitbutton" type="submit" value="Submit">
-  </form> 
    
    
    
-  <button type="button" id="RandomB">Random</button>
-  <form id="nameform">
-    Name:<input type="text" id="name"><br>
-    User:<input type="text" id="user"><br>
-    <button type="button" id="entername">Enter</button>
-  </form>
+  
 
 
 

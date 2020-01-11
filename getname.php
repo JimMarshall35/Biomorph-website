@@ -17,11 +17,15 @@ $result = mysqli_query($mysqli,$sql) or die("bad query: $sql");
 $num_rows = mysqli_num_rows($result);
 if($num_rows >0){
 	while($row = mysqli_fetch_assoc($result)){
-	echo $row['Name']. " discovered by " . $row['Creator'];
+		echo '<h1 class="heading">';
+		echo $row['Name']. " discovered by " . $row['Creator'];
+		echo '</h1>';
 	}
 }
 else{
+	echo '<h1 class="heading">';
 	echo 'unnamed biomorph';
+	echo '</h1>';
 }
 
 
