@@ -1,357 +1,49 @@
-<!doctype html>
 
-<canvas id="c"></canvas>
+<!DOCTYPE html>
+<html>
 
- <form id="form">
+<head>
+  <link rel="stylesheet" type="text/css" href="css/styles.css">
+</head>
 
-  gene 1: <input type="number" id="gene1" max="9" min="-9"  autocomplete=off><br>
+<body>
+  <div id="nametitle">
+    This Biomorph Is Unnamed
+  </div>
+  <canvas id="c"></canvas>
 
-  gene 2: <input type="number" id="gene2" max="9" min="-9"  autocomplete=off><br>
+   
+  <form id="form">
+    <section class="genesflexbox">
+      gene 1: <input class="geneinput" type="number" id="gene1" max="9" min="-9"  autocomplete=off><br>
 
-  gene 3: <input type="number" id="gene3" max="9" min="-9"  autocomplete=off><br>
+      gene 2: <input class="geneinput" type="number" id="gene2" max="9" min="-9"  autocomplete=off><br>
 
-  gene 4: <input type="number" id="gene4" max="9" min="-9"  autocomplete=off><br>
+      gene 3: <input class="geneinput" type="number" id="gene3" max="9" min="-9"  autocomplete=off><br>
 
-  gene 5: <input type="number" id="gene5" max="9" min="-9"  autocomplete=off><br>
+      gene 4: <input class="geneinput" type="number" id="gene4" max="9" min="-9"  autocomplete=off><br>
 
-  gene 6: <input type="number" id="gene6" max="9" min="-9"  autocomplete=off><br>
+      gene 5: <input class="geneinput" type="number" id="gene5" max="9" min="-9"  autocomplete=off><br>
 
-  gene 7: <input type="number" id="gene7" max="9" min="-9"  autocomplete=off><br>
+      gene 6: <input class="geneinput" type="number" id="gene6" max="9" min="-9"  autocomplete=off><br>
 
+      gene 7: <input class="geneinput" type="number" id="gene7" max="9" min="-9"  autocomplete=off><br>
+    </section>
+    
 
+    <input class="submitbutton" type="submit" value="Submit">
+  </form> 
+   
+   
+   
+  <button type="button" id="RandomB">Random</button>
+  <form id="nameform">
+    Name:<input type="text" id="name"><br>
+    <button type="button" id="Entername">Enter</button>
+  </form>
 
-  <input type="submit" value="Submit">
 
-</form> 
-<button type="button" id="RandomB">Random</button>
 
-<script>
-
-	
-
-var defaultanglemag = 30
-
-
-
-var defaultlength = 20
-
-
-
-var defaultdepth = 10
-
-
-
-var maxlengthchange = 28
-
-
-
-var maxanglechange = 180
-
-
-
-
-
-
-
-class Vector2{
-
-  constructor(x,y){
-
-    this.x = x;
-
-    this.y = y;
-
-  }
-
-  subtract(v){
-
-    return new Vector2(this.x-v.x,this.y-v.y);
-
-  }
-
-  add(v){
-
-    return new Vector2(this.x+v.x, this.y+v.y);
-
-  }
-
-  rotate(angle){
-
-    let x1 = this.x;
-
-    let y1 = this.y;
-
-    let x = Math.cos(angle)* x1 - Math.sin(angle)* y1;
-
-	let y = Math.sin(angle)*x1 + Math.cos(angle)* y1;
-
-    return new Vector2(x,y);
-
-  }
-
-  getMagnitude(){
-
-    return Math.sqrt((this.x*this.x) + (this.y*this.y));
-
-  }
-
-  getNormal(){
-
-  	let magnitude = this.getMagnitude();
-
-    return new Vector2(this.x/magnitude, this.y/magnitude);
-
-  }
-
-}
-
-class Node{
-
-  constructor(pos, depth, parent, biomorph){
-
-    this.pos = pos;
-
-    this.depth = depth;
-
-    this.parent = parent;
-
-    this.biomorph = biomorph;
-
-  }
-
-  addNodePair(i){
-
-    let normalizedvector = (this.pos.subtract(this.parent.pos)).getNormal();
-
-    let LorR = 1;
-
-    console.log(this.biomorph);
-
-    for(var j=0; j<2; j++){
-
-      console.log(this.pos);
-
-      let k1 = maxanglechange/9;
-
-      
-
-      let k2 = (maxlengthchange+1)/9;
-
-      let depthfraction = i/this.biomorph.genome[0];
-
-      let distancefraction = Math.abs((this.pos.subtract(this.parent.pos)).getMagnitude()/(2*maxlengthchange + defaultlength));
-
-      let rotationamount = defaultanglemag+this.biomorph.genome[1]*k1 + this.biomorph.genome[2]*depthfraction*k1 + this.biomorph.genome[3]*distancefraction*k1;            
-
-      let magnitude = defaultlength + this.biomorph.genome[4]*k2 + this.biomorph.genome[5]*depthfraction*k2 + this.biomorph.genome[6]*distancefraction*k2;           
-
-      let rotatedvector = normalizedvector.rotate(rotationamount*LorR);
-
-      let finalvector = new Vector2(rotatedvector.x*magnitude, rotatedvector.y*magnitude);
-
-      let newpos = this.pos.add(finalvector);
-
-      console.log(k1);
-
-      console.log(k2);
-
-      console.log(depthfraction);
-
-      console.log(distancefraction);
-
-      console.log(rotationamount);
-
-      console.log(magnitude);
-
-      console.log(rotatedvector);
-
-      console.log(finalvector);
-
-      console.log(newpos);
-
-      this.biomorph.nodes.push(new Node(newpos, i, this, this.biomorph));
-
-      LorR *= -1;
-
-    }
-
-  }
-
-}
-
-class BioMorph{
-
-  constructor(genome){
-
-    this.genome = genome;
-
-    this.nodes = [];
-
-  }
-
-  create(x,y){
-
-    let v1 = new Vector2(x,y);
-
-    let v2 = new Vector2(x,y+this.genome[4]*((maxlengthchange)/9)+1);
-
-    let base = new Node(v1,0,null,this);
-
-    let startnode = new Node(v2 , -1, base, this);
-
-    this.nodes.push(startnode);
-
-    for(var i=0;i<Math.abs(this.genome[0]); i++){
-
-      for(var j=0;j<this.nodes.length;j++){
-
-        if(this.nodes[j].depth==i-1){
-
-          this.nodes[j].addNodePair(i);
-
-        }
-
-      }
-
-    }
-
-  }
-
-
-
-}
-
-function drawBioMorph(b, ctx){
-
-  for(var i=0;i<b.nodes.length;i++){
-
-    let node = b.nodes[i];
-
-    if(node.parent != null){
-
-      
-
-      let nodeparent = b.nodes[i].parent;
-
-      ctx.beginPath(); 
-
-      ctx.moveTo(node.pos.x,node.pos.y);
-
-      ctx.lineTo(node.parent.pos.x,node.parent.pos.y);
-
-      ctx.stroke();
-
-      //window.confirm();
-
-    }
-
-  }
-
-}
-
-function formSubmit(event){
-
-	makeBioMorphFromForm();
-
-	event.preventDefault();
-
-}
-function randomButton(event){
-	randomizeForm();
-	makeBioMorphFromForm();
-	event.preventDefault();
-}
-
-function getRandomIntInclusive(min, max) {
-  min = Math.ceil(min);
-  max = Math.floor(max);
-  return Math.floor(Math.random() * (max - min + 1)) + min; //The maximum is inclusive and the minimum is inclusive 
-}
-
-function randomizeForm(){
-	var g1 = document.getElementById("gene1").value = getRandomIntInclusive(-9,9);
-
- 	var g2 = document.getElementById("gene2").value = getRandomIntInclusive(-9,9);
-	var g3 = document.getElementById("gene3").value  = getRandomIntInclusive(-9,9);
-
-	var g4 = document.getElementById("gene4").value  = getRandomIntInclusive(-9,9);
-
-	var g5 = document.getElementById("gene5").value  = getRandomIntInclusive(-9,9);
-
-	var g6 = document.getElementById("gene6").value  = getRandomIntInclusive(-9,9);
-	var g7 = document.getElementById("gene7").value  = getRandomIntInclusive(-9,9);
-
-}
-
-function makeBioMorphFromForm(){
-
-	ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-	var g1 = document.getElementById("gene1").value;
-
- 	var g2 = document.getElementById("gene2").value;
-
-    var g3 = document.getElementById("gene3").value;
-
-    var g4 = document.getElementById("gene4").value;
-
-    var g5 = document.getElementById("gene5").value;
-
-    var g6 = document.getElementById("gene6").value;
-
-    var g7 = document.getElementById("gene7").value;
-
-    var biomorph = new BioMorph([g1,g2,g3,g4,g5,g6,g7]);
-
-    biomorph.create(width/2,height/2);
-
-    console.log(biomorph.nodes);
-
-    drawBioMorph(biomorph,ctx);
-
-}
-
-//Always check for properties and methods, to make sure your code doesn't break in other browsers.
-
-var canvas = document.getElementById('c');
-
-if (canvas.getContext)
-
-{   
-
-  
-  const randombutton= document.getElementById('RandomB');
-
-  randombutton.addEventListener('click', randomButton);
-
-  const form = document.getElementById('form');
-
-  form.addEventListener('submit', formSubmit);
-
-  var ctx = canvas.getContext('2d');  
-
-  ctx.canvas.width  = window.innerWidth;
-
-  ctx.canvas.height = window.innerHeight;
-
-  var width = canvas.width;
-
-  var height = canvas.height;
-
-  randomizeForm();
-
-  makeBioMorphFromForm();
-
-
-
-}
-
-else 
-
-{   
-
-// canvas-unsupported code here
-
-}
-
-</script>
+<script src="js/biomorph.js"></script>
+</body>
+</html>

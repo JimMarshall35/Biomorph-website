@@ -1,0 +1,23 @@
+.genesflexbox{
+	width: 100%;
+	display: flex;
+	
+	justify-content: center;
+
+}
+.geneinput{
+	display: block;
+	
+	margin-right: 10px;
+}
+.submitbutton{
+	width: 100%;
+	align-items: center;
+	justify-content: center;
+}
+
+
+html {}
+body {
+    height: 95vh;
+}
