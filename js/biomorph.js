@@ -134,7 +134,7 @@ class BioMorph {
 		}
 	}
 	zoom(i){
-		this.currentscale += i * this.scalingfactor;
+		this.currentscale += -i * this.scalingfactor;
 		for(var i = 0; i < this.nodes.length; i++){
 			this.nodes[i].pos = this.centroid.add(new Vector2(this.nodes[i].initvectocentroid.x * this.currentscale, this.nodes[i].initvectocentroid.y * this.currentscale));
 		}
@@ -223,7 +223,7 @@ function insertRow(user, name) {
 	xhr.onload = function() {
 		if (this.status == 200) {
 			console.log("php returned " + this.responseText);
-			document.getElementById("nametitle").innerHTML = name + " discovered by " + user;
+			document.getElementById("nametitle").innerHTML = '<h1 class="heading">'+name + " discovered by " + user + '</h1>';
 		} else {
 			console.log(this.status);
 		}
@@ -247,7 +247,7 @@ function randomButtonHandler(event) {
 function nameEnterButtonHandler() {
 	var usernameinput = document.getElementById('user').value;
 	var nameinput = document.getElementById('name').value;
-	if (document.getElementById("nametitle").innerHTML == "unnamed biomorph") {
+	if (document.getElementById("nametitle").innerHTML == '<h1 class="heading">unnamed biomorph</h1>') {
 		if (usernameinput.value != "" && nameinput != "") {
 			insertRow(usernameinput, nameinput);
 			document.getElementById('name').value = "";
