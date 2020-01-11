@@ -1,26 +1,8 @@
-var defaultanglemag = 30
-
-
-
-var defaultlength = 20
-
-
-
-var defaultdepth = 10
-
-
-
-var maxlengthchange = 28
-
-
-
-var maxanglechange = 180
-
-
-
-
-
-
+const defaultanglemag = 30
+const defaultlength = 20
+const defaultdepth = 10
+const maxlengthchange = 28
+const maxanglechange = 180
 
 class Vector2{
 
@@ -191,14 +173,14 @@ function drawBioMorph(b, ctx){
   }
 }
 
-function formSubmit(event){
+function formSubmitHandler(event){
 
   makeBioMorphFromForm();
 
   event.preventDefault();
 
 }
-function randomButton(event){
+function randomButtonHandler(event){
   randomizeForm();
   makeBioMorphFromForm();
   event.preventDefault();
@@ -211,17 +193,13 @@ function getRandomIntInclusive(min, max) {
 }
 
 function randomizeForm(){
-  var g1 = document.getElementById("gene1").value = getRandomIntInclusive(-9,9);
-
-  var g2 = document.getElementById("gene2").value = getRandomIntInclusive(-9,9);
-  var g3 = document.getElementById("gene3").value  = getRandomIntInclusive(-9,9);
-
-  var g4 = document.getElementById("gene4").value  = getRandomIntInclusive(-9,9);
-
-  var g5 = document.getElementById("gene5").value  = getRandomIntInclusive(-9,9);
-
-  var g6 = document.getElementById("gene6").value  = getRandomIntInclusive(-9,9);
-  var g7 = document.getElementById("gene7").value  = getRandomIntInclusive(-9,9);
+  document.getElementById("gene1").value = getRandomIntInclusive(-9,9);
+  document.getElementById("gene2").value = getRandomIntInclusive(-9,9);
+  document.getElementById("gene3").value  = getRandomIntInclusive(-9,9);
+  document.getElementById("gene4").value  = getRandomIntInclusive(-9,9);
+  document.getElementById("gene5").value  = getRandomIntInclusive(-9,9);
+  document.getElementById("gene6").value  = getRandomIntInclusive(-9,9);
+  document.getElementById("gene7").value  = getRandomIntInclusive(-9,9);
 
 }
 
@@ -241,17 +219,11 @@ function makeBioMorphFromForm(){
 }
 function getFormArray(){
   var g1 = document.getElementById("gene1").value;
-
   var g2 = document.getElementById("gene2").value;
-
   var g3 = document.getElementById("gene3").value;
-
   var g4 = document.getElementById("gene4").value;
-
   var g5 = document.getElementById("gene5").value;
-
   var g6 = document.getElementById("gene6").value;
-
   var g7 = document.getElementById("gene7").value;
   return [g1,g2,g3,g4,g5,g6,g7];
 }
@@ -267,6 +239,49 @@ function getName(g){
   }
   xhr.send();
 }
+function insertRow(user, name){
+	var xhr = new XMLHttpRequest();
+	var genome = JSON.stringify(getFormArray());
+	var current_datetime = new Date();
+	let formatted_date = current_datetime.getFullYear() + "-" + (current_datetime.getMonth() + 1) + "-" + current_datetime.getDate() + " " + current_datetime.getHours() + ":" + current_datetime.getMinutes() + ":" + current_datetime.getSeconds()
+	console.log(user);
+	console.log(name);
+	console.log(genome);
+	console.log(formatted_date);
+	xhr.open('GET', 'insert.php?genome=' + genome +
+		'&name='+ name +
+		'&creator='+ user +
+		'&datetime=' + formatted_date, true);
+	xhr.onreadystatechange = function(){
+		console.log(this.readyState);
+	}
+    xhr.onload = function(){
+	    if(this.status == 200){
+	      console.log("php returned " + this.responseText);
+	      document.getElementById("nametitle").innerHTML = name + " discovered by " + user;
+	    }
+	    else{
+	    	console.log(this.status);
+	    }
+    }
+    xhr.send();
+}
+function nameEnterButtonHandler(){
+	var usernameinput = document.getElementById('user').value;
+	var nameinput = document.getElementById('name').value;
+	if(document.getElementById("nametitle").innerHTML == "unnamed biomorph"){
+		if(usernameinput.value != "" && nameinput != ""){
+			insertRow(usernameinput, nameinput);
+			window.alert("hello");
+		}
+		else{
+			window.alert("enter a name and username");
+		}
+	}
+	else{
+		window.alert("biomorph already named");
+	}
+}
 //Always check for properties and methods, to make sure your code doesn't break in other browsers.
 
 var canvas = document.getElementById('c');
@@ -274,15 +289,16 @@ var canvas = document.getElementById('c');
 if (canvas.getContext)
 
 {   
-
+  const nameenterbutton = document.getElementById('entername');
+  nameenterbutton.addEventListener('click', nameEnterButtonHandler);
   
   const randombutton= document.getElementById('RandomB');
 
-  randombutton.addEventListener('click', randomButton);
+  randombutton.addEventListener('click', randomButtonHandler);
 
   const form = document.getElementById('form');
 
-  form.addEventListener('submit', formSubmit);
+  form.addEventListener('submit', formSubmitHandler);
 
   var ctx = canvas.getContext('2d');  
 
