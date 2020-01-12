@@ -3,11 +3,14 @@
 const defaultanglemag = 30;
 const defaultlength = 20;
 const defaultdepth = 10;
-var maxlengthchange;
+const maxlengthchange = 28;
 const maxanglechange = 180;
-const sizingconst = 21.39285714285714;
+//const sizingconst = 21.39285714285714;
 var biomorph;
-// classes
+var width;
+var height;
+
+//---------- classes ----------//
 
 class Vector2 {
 
@@ -40,7 +43,6 @@ class Vector2 {
 		let magnitude = this.getMagnitude();
 		return new Vector2(this.x / magnitude, this.y / magnitude);
 	}
-
 }
 
 class Node {
@@ -110,6 +112,8 @@ class BioMorph {
 				ctx.closePath();
 			}
 		}
+	}
+	drawCentroid(ctx){
 		ctx.strokeStyle = "Crimson";
 		ctx.beginPath();
 		ctx.moveTo(this.centroid.x + 5, this.centroid.y);
@@ -135,6 +139,9 @@ class BioMorph {
 	}
 	zoom(i){
 		this.currentscale += -i * this.scalingfactor;
+		if(this.currentscale < 0){
+			this.currentscale = 0;
+		}
 		for(var i = 0; i < this.nodes.length; i++){
 			this.nodes[i].pos = this.centroid.add(new Vector2(this.nodes[i].initvectocentroid.x * this.currentscale, this.nodes[i].initvectocentroid.y * this.currentscale));
 		}
@@ -142,16 +149,25 @@ class BioMorph {
 	}
 }
 
-
-
-//helpers
+//---------- helpers ----------//
 
 function sizeCanvas() {
 	canvas.style.width = '100%';
 	canvas.style.height = '100%';
 	canvas.width = canvas.offsetWidth;
 	canvas.height = canvas.offsetHeight;
-	maxlengthchange = canvas.height / sizingconst;
+	width = canvas.width;
+	height = canvas.height;
+	//maxlengthchange = canvas.height / sizingconst;
+}
+
+function checkArrayInts(a){
+	for(var i=0; i<a.length; i++){
+		if(a[i] % 1 != 0){
+			return false;
+		}
+	}
+	return true;
 }
 
 function getRandomIntInclusive(min, max) {
@@ -168,16 +184,30 @@ function randomizeForm() {
 	document.getElementById("gene5").value = getRandomIntInclusive(-9, 9);
 	document.getElementById("gene6").value = getRandomIntInclusive(-9, 9);
 	document.getElementById("gene7").value = getRandomIntInclusive(-9, 9);
+}
 
+function setForm(g){
+	document.getElementById("gene1").value = g[0];
+	document.getElementById("gene2").value = g[1];
+	document.getElementById("gene3").value = g[2];
+	document.getElementById("gene4").value = g[3];
+	document.getElementById("gene5").value = g[4];
+	document.getElementById("gene6").value = g[5];
+	document.getElementById("gene7").value = g[6];
 }
 
 function makeBioMorphFromForm() {
 	
 	var genome = getFormArray();
-	biomorph = new BioMorph(genome);
-	getName(genome);
-	biomorph.create(width / 2, height / 2);
-	biomorph.drawBioMorph(ctx);
+	if(checkArrayInts(genome)){
+		biomorph = new BioMorph(genome);
+		getName(genome);
+		biomorph.create(width / 2, height / 2);
+		biomorph.drawBioMorph(ctx);
+	}
+	else{
+		window.alert("genes must be ints");
+	}
 }
 
 function getFormArray() {
@@ -190,6 +220,8 @@ function getFormArray() {
 	var g7 = document.getElementById("gene7").value;
 	return [g1, g2, g3, g4, g5, g6, g7];
 }
+
+//---------- AJAX functions ----------//
 
 function getName(g) {
 	var xhr = new XMLHttpRequest();
@@ -205,33 +237,63 @@ function getName(g) {
 }
 
 function insertRow(user, name) {
-	var xhr = new XMLHttpRequest();
-	var genome = JSON.stringify(getFormArray());
-	var current_datetime = new Date();
-	let formatted_date = current_datetime.getFullYear() + "-" + (current_datetime.getMonth() + 1) + "-" + current_datetime.getDate() + " " + current_datetime.getHours() + ":" + current_datetime.getMinutes() + ":" + current_datetime.getSeconds()
-	console.log(user);
-	console.log(name);
-	console.log(genome);
-	console.log(formatted_date);
-	xhr.open('GET', 'insert.php?genome=' + genome +
-		'&name=' + name +
-		'&creator=' + user +
-		'&datetime=' + formatted_date, true);
-	xhr.onreadystatechange = function() {
-		console.log(this.readyState);
-	}
-	xhr.onload = function() {
-		if (this.status == 200) {
-			console.log("php returned " + this.responseText);
-			document.getElementById("nametitle").innerHTML = '<h1 class="heading">'+name + " discovered by " + user + '</h1>';
-		} else {
-			console.log(this.status);
+	let a = getFormArray();
+	if(checkArrayInts(a)){
+		var xhr = new XMLHttpRequest();
+		var genome = JSON.stringify(a);
+		var current_datetime = new Date();
+		let formatted_date = current_datetime.getFullYear() + "-" + (current_datetime.getMonth() + 1) + "-" + current_datetime.getDate() + " " + current_datetime.getHours() + ":" + current_datetime.getMinutes() + ":" + current_datetime.getSeconds()
+		console.log(user);
+		console.log(name);
+		console.log(genome);
+		console.log(formatted_date);
+		xhr.open('GET', 'insert.php?genome=' + genome +
+			'&name=' + name +
+			'&creator=' + user +
+			'&datetime=' + formatted_date, true);
+		xhr.onreadystatechange = function() {
+			console.log(this.readyState);
 		}
+		xhr.onload = function() {
+			if (this.status == 200) {
+				console.log("php returned " + this.responseText);
+				document.getElementById("nametitle").innerHTML = '<h1 class="heading">'+name + " discovered by " + user + '</h1>';
+			} else {
+				console.log(this.status);
+			}
+		}
+		xhr.send();
+	}
+	else{
+		window.alert("genes must be ints");
+	}
+}
+
+function getLastTen(){
+	var xhr = new XMLHttpRequest();
+	xhr.open('GET', 'gettopten.php',true);
+	xhr.onload = function(){
+		console.log("php returned " + this.responseText);
+		var lasttenlist = JSON.parse(this.responseText);
+		let htmlstring = "";
+		for(var i=0; i<lasttenlist["topten"].length; i++){
+			htmlstring += ' <option value="'+lasttenlist["topten"][i].genome +'" ondblclick="listItemDoubleClickHandler(this)">' + lasttenlist["topten"][i].name 
+		}
+		document.getElementById("selectBox").innerHTML = htmlstring;
 	}
 	xhr.send();
 }
 
-// event handlers
+//---------- event handlers ----------//
+
+function listItemDoubleClickHandler(obj){
+	let genome = JSON.parse("["+obj.value+"]");
+	setForm(genome);
+	//getName(genome);
+	document.getElementById("nametitle").innerHTML = obj.innerHTML;
+	makeBioMorphFromForm();
+	event.preventDefault();
+}
 
 function formSubmitHandler(event) {
 	makeBioMorphFromForm();
@@ -251,6 +313,7 @@ function nameEnterButtonHandler() {
 		if (usernameinput.value != "" && nameinput != "") {
 			insertRow(usernameinput, nameinput);
 			document.getElementById('name').value = "";
+
 		} else {
 			window.alert("enter a name and username");
 		}
@@ -259,16 +322,18 @@ function nameEnterButtonHandler() {
 	}
 }
 
-function resizehandler() {
+function resizeHandler() {
 	sizeCanvas();
+	makeBioMorphFromForm();
 }
 
-//first executed code
+//---------- first executed code ----------//
+
 var canvas = document.getElementById('c');
 
 if (canvas.getContext)
-
 {
+	getLastTen();
 	window.addEventListener("wheel", event => {
     	const delta = Math.sign(event.deltaY);
     	biomorph.zoom(delta);
@@ -281,14 +346,10 @@ if (canvas.getContext)
 	form.addEventListener('submit', formSubmitHandler);
 	var ctx = canvas.getContext('2d');
 	sizeCanvas();
-	var width = canvas.width;
-	var height = canvas.height;
 	randomizeForm();
 	makeBioMorphFromForm();
 } else
 
 {
-
-	// canvas-unsupported code here
-
+	window.alert("canvas not supported");
 }

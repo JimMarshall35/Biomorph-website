@@ -16,43 +16,42 @@
   </div>
   
 
-  <div style="height: 20%;">
+  <div style="height: 20%;" align="center">
      <form id="form">
       <section class="genesflexbox">
-        gene 1: <input class="geneinput" type="number" id="gene1" max="9" min="-9"  autocomplete=off><br>
+        gene 1: <input class="geneinput" type="number" id="gene1" max="9" min="-9"  autocomplete=off maxlength="2"><br>
 
-        gene 2: <input class="geneinput" type="number" id="gene2" max="9" min="-9"  autocomplete=off><br>
+        gene 2: <input class="geneinput" type="number" id="gene2" max="9" min="-9"  autocomplete=off maxlength="2"><br>
 
-        gene 3: <input class="geneinput" type="number" id="gene3" max="9" min="-9"  autocomplete=off><br>
+        gene 3: <input class="geneinput" type="number" id="gene3" max="9" min="-9"  autocomplete=off maxlength="2"><br>
 
-        gene 4: <input class="geneinput" type="number" id="gene4" max="9" min="-9"  autocomplete=off><br>
+        gene 4: <input class="geneinput" type="number" id="gene4" max="9" min="-9"  autocomplete=off maxlength="2"><br>
 
-        gene 5: <input class="geneinput" type="number" id="gene5" max="9" min="-9"  autocomplete=off><br>
+        gene 5: <input class="geneinput" type="number" id="gene5" max="9" min="-9"  autocomplete=off maxlength="2"><br>
 
-        gene 6: <input class="geneinput" type="number" id="gene6" max="9" min="-9"  autocomplete=off><br>
+        gene 6: <input class="geneinput" type="number" id="gene6" max="9" min="-9"  autocomplete=off maxlength="2"><br>
 
-        gene 7: <input class="geneinput" type="number" id="gene7" max="9" min="-9"  autocomplete=off><br>
+        gene 7: <input class="geneinput" type="number" id="gene7" max="9" min="-9"  autocomplete=off maxlength="2"><br>
+        <input align="center" style="margin-bottom: 3em; margin-right: 1em;" class="submitandrandombutton" type="submit" value="Submit">
+        <button align="center" style="margin-bottom: 3em; margin-right: 1em;" class="submitandrandombutton" type="button" id="RandomB">Random</button>
       </section>
-      <input class="submitbutton" type="submit" value="Submit">
+      
     </form>
-    <button type="button" id="RandomB">Random</button>
-    <form id="nameform">
-      <section class="genesflexbox">
-        Name:<input type="text" id="name"><br>
-        User:<input type="text" id="user"><br>
-        <button type="button" id="entername">Enter</button>
-      </section>
-    </form>
+    <section class="genesflexbox">
+      <select id="selectBox" size="5" style="margin-right: 2em; width: 10em">
 
+      </select>
+      <form id="nameform">
+        <header style="margin-bottom: 1em;">Name This Biomorph</header>
+        <section class="genesflexbox">
+          Name:<input class="nameinput" type="text" id="name" size="20"><br>
+          User:<input class="nameinput" type="text" id="user"><br>
+          <button type="button" id="entername">Enter</button>
+        </section>
+      </form>
+    </section>
+    
   </div>
-   
-   
-   
-   
-  
-
-
-
 <script src="js/biomorph.js"></script>
 </body>
 </html>

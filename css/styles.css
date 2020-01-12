@@ -7,24 +7,30 @@
 }
 .geneinput{
 	display: block;
-	
+	margin-right: 1em;
+	width: 3em;
+	margin-bottom: 3em;
+}
+.nameinput{
+	display: block;
 	margin-right: 10px;
 }
-
 .heading{
 	font-family: "Courier New", Courier, monospace;
-font-size: 32px;
-letter-spacing: 2px;
-word-spacing: 2px;
-color: #000000;
-font-weight: 700;
-text-decoration: none;
-font-style: normal;
-font-variant: normal;
-text-transform: none;
+	font-size: 32px;
+	letter-spacing: 2px;
+	word-spacing: 2px;
+	color: #000000;
+	font-weight: 700;
+	text-decoration: none;
+	font-style: normal;
+	font-variant: normal;
+	text-transform: none;
 }
+
 
 html {}
 body {
+	font-family: "Courier New", Courier, monospace;
     height: 95vh;
 }
