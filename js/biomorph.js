@@ -5,18 +5,27 @@ const defaultlength = 20;
 const defaultdepth = 10;
 const maxlengthchange = 28;
 const maxanglechange = 180;
+const transitiontime = 1000;
 //const sizingconst = 21.39285714285714;
+var startbm;
+var endbm;
 var biomorph;
 var width;
 var height;
-
+var ctx;
 //---------- classes ----------//
 
 class Vector2 {
-
+	
 	constructor(x, y) {
 		this.x = x;
 		this.y = y;
+	}
+	lerp(v, t){
+		//(1 - t) * v0 + t * v1;
+		let x = (1-t)*this.x + t*v.x
+		let y = (1-t)*this.y + t*v.y
+		return new Vector2(x,y);
 	}
 
 	subtract(v) {
@@ -53,7 +62,11 @@ class Node {
 		this.parent = parent;
 		this.biomorph = biomorph;
 	}
-
+	addNodePairParentLocation(i){
+		for(var j=0; j<2; j++){
+			this.biomorph.nodes.push(new Node(this.pos, i, this, this.biomorph));
+		}
+	}
 	addNodePair(i) { // adds a new pair of nodes to a node using the genome of that nodes biomorph
 		let normalizedvector = (this.pos.subtract(this.parent.pos)).getNormal();
 		let LorR = 1;
@@ -81,7 +94,18 @@ class BioMorph {
 		this.currentscale = 1;
 		this.scalingfactor = 0.2;
 	}
-
+	
+	addOnExtraNodes(extraD){
+		outerdepth = Math.abs(this.genome[0]);
+		for(var i=0; i<extraD; i++){
+			for(var j =0; j < this.nodes.length; j++){
+				if(this.nodes[j].depth == outerdepth){
+					this.nodes[j].addNodePairParentLocation(outerdepth+1);
+				}
+			}
+			outerdepth++;
+		}
+	}
 	create(x, y) {
 		let v1 = new Vector2(x, y);
 		let v2 = new Vector2(x, y + this.genome[4] * ((maxlengthchange) / 9) + 1);
@@ -147,9 +171,21 @@ class BioMorph {
 		}
 		this.drawBioMorph(ctx);
 	}
+	
 }
 
 //---------- helpers ----------//
+function equalizeBiomorphNodes(b1,b2){
+
+	if(Math.abs(b1.genome[0]) < Math.abs(b2.genome[0])){
+		let diff = Math.abs(b2.genome[0]) - Math.abs(b1.genome[0]);
+		b1.addOnExtraNodes(diff);
+	}
+	if(Math.abs(b1.genome[0]) > Math.abs(b2.genome[0])){
+		let diff = Math.abs(b1.genome[0]) - Math.abs(b2.genome[0]);
+		b2.addOnExtraNodes(diff);
+	}
+}
 
 function sizeCanvas() {
 	canvas.style.width = '100%';
@@ -200,10 +236,12 @@ function makeBioMorphFromForm() {
 	
 	var genome = getFormArray();
 	if(checkArrayInts(genome)){
-		biomorph = new BioMorph(genome);
+		var bm = new BioMorph(genome);
 		getName(genome);
-		biomorph.create(width / 2, height / 2);
-		biomorph.drawBioMorph(ctx);
+		bm.create(width / 2, height / 2);
+		//bm.drawBioMorph(ctx);
+		return bm;
+
 	}
 	else{
 		window.alert("genes must be ints");
@@ -219,6 +257,13 @@ function getFormArray() {
 	var g6 = document.getElementById("gene6").value;
 	var g7 = document.getElementById("gene7").value;
 	return [g1, g2, g3, g4, g5, g6, g7];
+}
+
+function lerpBetween(animb, starb, endb, t){
+	for(var i=0; i<startb.nodes.length; i++){
+		animb.nodes[i].pos = startb.nodes[i].pos.lerp(endb.nodes[i].pos, t);
+	}
+	animb.drawBioMorph(ctx);
 }
 
 //---------- AJAX functions ----------//
@@ -295,14 +340,41 @@ function listItemDoubleClickHandler(obj){
 	event.preventDefault();
 }
 
-function formSubmitHandler(event) {
-	makeBioMorphFromForm();
+function formSubmitHandler(event) { //needs to create a new one and leave the one created on startup intact
+									//if this new one has more nodes than the first one then the first one needs to grow more nodes
+	                                //to match (at same position as their parents).
+	endbm = makeBioMorphFromForm(); // if the new one has fewer nodes than the first one then it needs to create normally, then 
+	if(endbm.genome[0]!=0){
+		equalizeBiomorphNodes(startbm, endbm);
+		console.log(startbm);
+		console.log(endbm);
+		biomorph = startbm;
+		let timer = window.performance.now();
+		let animate = true;
+		while(animate){
+			let newtimer = window.performance.now();
+			let t = (newtimer - timer)/transitiontime;
+			if(t >= transitiontime){
+				animate = false;
+			}
+			for(var i=0; i<biomorph.nodes.length; i++){
+				biomorph.nodes[i].pos = startbm.nodes[i].lerp(endbm.nodes[i].pos, t);
+			}
+			biomorph.drawBioMorph(ctx);
+		}
+		biomorph.genome = endbm.genome;
+		biomorph.create();
+	}                               // make up the node count 
+	else{
+		endbm = startbm = biomorph;
+		biomorph.drawBioMorph(ctx);
+	}
 	event.preventDefault();
 }
 
 function randomButtonHandler(event) {
 	randomizeForm();
-	makeBioMorphFromForm();
+	endbm = makeBioMorphFromForm();
 	event.preventDefault();
 }
 
@@ -344,10 +416,12 @@ if (canvas.getContext)
 	randombutton.addEventListener('click', randomButtonHandler);
 	const form = document.getElementById('form');
 	form.addEventListener('submit', formSubmitHandler);
-	var ctx = canvas.getContext('2d');
+	ctx = canvas.getContext('2d');
 	sizeCanvas();
 	randomizeForm();
-	makeBioMorphFromForm();
+	biomorph = makeBioMorphFromForm();
+	biomorph.drawBioMorph(ctx);
+	startbm = biomorph;
 } else
 
 {
