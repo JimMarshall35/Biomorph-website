@@ -43,6 +43,11 @@ class Vector2 {
 		let magnitude = this.getMagnitude();
 		return new Vector2(this.x / magnitude, this.y / magnitude);
 	}
+	Lerp(v,t){
+		var retx = this.x * (1 - t) + v.x*t;
+		var rety = this.y * (1 - t) + v.y*t;
+		return Vector2(retx, rety);
+	}
 }
 
 class Node {
@@ -81,7 +86,9 @@ class BioMorph {
 		this.currentscale = 1;
 		this.scalingfactor = 0.2;
 	}
+	addSamePosNodePair(i){
 
+	}
 	create(x, y) {
 		let v1 = new Vector2(x, y);
 		let v2 = new Vector2(x, y + this.genome[4] * ((maxlengthchange) / 9) + 1);
@@ -257,7 +264,8 @@ function insertRow(user, name) {
 		xhr.onload = function() {
 			if (this.status == 200) {
 				console.log("php returned " + this.responseText);
-				document.getElementById("nametitle").innerHTML = '<h1 class="heading">'+name + " discovered by " + user + '</h1>';
+				getLastTen();
+				
 			} else {
 				console.log(this.status);
 			}
@@ -273,13 +281,15 @@ function getLastTen(){
 	var xhr = new XMLHttpRequest();
 	xhr.open('GET', 'gettopten.php',true);
 	xhr.onload = function(){
-		console.log("php returned " + this.responseText);
 		var lasttenlist = JSON.parse(this.responseText);
 		let htmlstring = "";
 		for(var i=0; i<lasttenlist["topten"].length; i++){
 			htmlstring += ' <option value="'+lasttenlist["topten"][i].genome +'" ondblclick="listItemDoubleClickHandler(this)">' + lasttenlist["topten"][i].name 
 		}
 		document.getElementById("selectBox").innerHTML = htmlstring;
+		document.getElementById("nametitle").innerHTML = lasttenlist["topten"][0].name;
+		setForm(lasttenlist["topten"][0].genome)
+		makeBioMorphFromForm()
 	}
 	xhr.send();
 }
@@ -333,7 +343,7 @@ var canvas = document.getElementById('c');
 
 if (canvas.getContext)
 {
-	getLastTen();
+	var number_1 = getLastTen();
 	window.addEventListener("wheel", event => {
     	const delta = Math.sign(event.deltaY);
     	biomorph.zoom(delta);
@@ -346,8 +356,6 @@ if (canvas.getContext)
 	form.addEventListener('submit', formSubmitHandler);
 	var ctx = canvas.getContext('2d');
 	sizeCanvas();
-	randomizeForm();
-	makeBioMorphFromForm();
 } else
 
 {
