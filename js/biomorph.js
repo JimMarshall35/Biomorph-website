@@ -203,12 +203,15 @@ function setForm(g){
 	document.getElementById("gene7").value = g[6];
 }
 
-function makeBioMorphFromForm() {
+function makeBioMorphFromForm(getname=true) {
 	
 	var genome = getFormArray();
 	if(checkArrayInts(genome)){
 		biomorph = new BioMorph(genome);
-		getName(genome);
+		if(getname){
+			getName(genome);
+		}
+		
 		biomorph.create(width / 2, height / 2);
 		biomorph.drawBioMorph(ctx);
 	}
@@ -300,7 +303,7 @@ function listItemDoubleClickHandler(obj){
 	let genome = JSON.parse("["+obj.value+"]");
 	setForm(genome);
 	//getName(genome);
-	document.getElementById("nametitle").innerHTML = obj.innerHTML;
+	//document.getElementById("nametitle").innerHTML = obj.innerHTML;
 	makeBioMorphFromForm();
 	event.preventDefault();
 }
