@@ -290,7 +290,7 @@ function getLastTen(){
 			htmlstring += ' <option value="'+lasttenlist["topten"][i].genome +'" ondblclick="listItemDoubleClickHandler(this)">' + lasttenlist["topten"][i].name 
 		}
 		document.getElementById("selectBox").innerHTML = htmlstring;
-		document.getElementById("nametitle").innerHTML = lasttenlist["topten"][0].name;
+		//document.getElementById("nametitle").innerHTML = lasttenlist["topten"][0].name;
 		setForm(lasttenlist["topten"][0].genome)
 		makeBioMorphFromForm()
 	}
